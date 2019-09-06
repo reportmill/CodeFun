@@ -9,8 +9,11 @@ public class SlideNode {
     // The SlideShow
     SlideShow            _show;
     
+    // The text for this node
+    String               _text;
+    
     // The items
-    String               _items[];
+    SlideNode            _items[];
     
     // The directive
     String               _directive;
@@ -27,16 +30,48 @@ public class SlideNode {
 /**
  * Creates a SlideNode for given Show and items.
  */
-public SlideNode(SlideShow aShow, String theItems[])
+public SlideNode(SlideShow aShow, String aStr)
 {
     _show = aShow;
-    _items = theItems;
+    _text = aStr;
+}
+
+/**
+ * Creates a SlideNode for given Show and items.
+ */
+public SlideNode(SlideShow aShow, String theItems[])
+{
+    this(aShow, theItems[0]);
+    
+    _items = new SlideNode[theItems.length-1];
+    for(int i=1;i<theItems.length;i++)
+        _items[i-1] = new SlideNode(aShow, theItems[i]);
 }
 
 /**
  * Returns the SlideShow.
  */
 public SlideShow getSlideShow()  { return _show; }
+
+/**
+ * Returns the node text.
+ */
+public String getText()  { return _text; }
+
+/**
+ * Returns the node items.
+ */
+public SlideNode[] getItems()  { return _items; }
+
+/**
+ * Returns the number of items.
+ */
+public int getItemCount()  { return _items.length; }
+
+/**
+ * Returns the individual item.
+ */
+public SlideNode getItem(int anIndex)  { return _items[anIndex]; }
 
 /**
  * Returns whether node is a directive.
@@ -48,10 +83,11 @@ public boolean isDirective()  { return getDirective()!=null; }
  */
 public String getDirective()
 {
+    // If already set, just return (empty string returns as null)
     if(_directive!=null) return _directive!=""? _directive : null;
     
     // Get item text and return null if no directive
-    String text = _items[0];
+    String text = getText().trim();
     if(!text.startsWith("[")) { _directive = ""; return null; }
     int end = text.indexOf("]");
     if(end<0) { _directive = ""; return null; }
@@ -64,6 +100,7 @@ public String getDirective()
     String entryStrings[] = suffix.split(",");
     _dirVals = new HashMap();
     
+    /// Iterate over entry strings and add to DirVals map
     for(String entryStr : entryStrings) { entryStr = entryStr.trim();
         String parts[] = entryStr.split(":");
         if(parts.length==2) {
@@ -71,6 +108,7 @@ public String getDirective()
         }
     }
     
+    // Return directive
     return _directive;
 }
 
@@ -95,7 +133,6 @@ public SlideView getSlideView()
     if(_slideView!=null) return _slideView;
     
     SlideView sview = new SlideView(this);
-    sview.setItems(_items);
     return _slideView = sview;
 }
 

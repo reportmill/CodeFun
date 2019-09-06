@@ -1,6 +1,7 @@
 package codefun;
 import snap.gfx.*;
 import snap.view.*;
+import snap.web.WebURL;
 
 /**
  * A view to show a slide.
@@ -20,7 +21,7 @@ public class SlideView extends ChildView {
     TextArea          _headerView;
     
     // The body view
-    BodyView          _bodyView;
+    ColView           _bodyView;
     
     // The page text
     StringView        _pageText;
@@ -64,7 +65,8 @@ public SlideView(SlideNode aSNode)
     addChild(_headerView);
     
     // Create BodyView
-    _bodyView = new BodyView(); _bodyView.setAlign(VPos.CENTER);
+    _bodyView = new ColView(); _bodyView.setAlign(VPos.CENTER);
+    _bodyView.setSpacing(12); //_bodyView.setFillWidth(true);
     _bodyView.setBounds(72,150,684,400);
     addChild(_bodyView);
     
@@ -78,6 +80,17 @@ public SlideView(SlideNode aSNode)
     iview.setXY(getWidth() - iview.getWidth() - 10, getHeight() - iview.getHeight() - 10);
     iview.setEffect(new ShadowEffect(6,Color.BLACK,1,1)); iview.setFill(Color.CLEAR);
     addChild(iview);
+    
+    // Set HeaderText
+    String headerText = _snode.getText();
+    setHeaderText(headerText);
+    
+    // Add items
+    for(SlideNode node : _snode.getItems())
+        addItem(node);
+        
+    // Shrink fonts to fit
+    shrinkItemFontsToFit();
 }
 
 /**
@@ -105,25 +118,90 @@ public void setHeaderText(String aValue)
 }
 
 /**
- * Sets the slide text items.
+ * Add an item.
  */
-public void setItems(String theItems[])
+public void addItem(SlideNode aNode)
 {
-    // Set HeaderText
-    if(theItems.length>0)
-        setHeaderText(theItems[0]);
+    // Get directive
+    String dir = aNode.getDirective();
+    if(dir==null) {
+        addTextItem(aNode); return; }
         
-    // Add Body items
-    for(int i=1;i<theItems.length;i++) { String item = theItems[i];
-        if(item.trim().length()==0) continue;
-        _bodyView.addItem(item);
+    // Handle directives
+    switch(dir) {
+        case "Image": addImageItem(aNode); break;
+        case "Hide": break;
+        default: addTextItem(aNode); break;
     }
+}
+
+/**
+ * Add a normal text item.
+ */
+public void addTextItem(SlideNode aNode)
+{
+    // Get text with bullet char prefix
+    String text = aNode.getText();
+    if(text.startsWith("\t\t")) text = text.replace("\t\t", "\t\u2022 ");
+    else if(text.startsWith("\t")) text = text.replace("\t", "\u2022 ");
     
+    // Create TextArea
+    TextArea textView = new TextArea(); textView.setGrowWidth(true);
+    textView.setText(text); textView.setEditable(false); textView.setWrapText(true);
+    textView.setFill(null); textView.setTextFill(Color.WHITE); textView.setFont(_font1);
+    textView.addEventHandler(e -> textView.setFill(_color), MouseEnter);
+    textView.addEventHandler(e -> textView.setFill(null), MouseExit);
+    
+    // Add to body view
+    _bodyView.addChild(textView);
+}
+
+/**
+ * Add a normal text item.
+ */
+public void addImageItem(SlideNode aNode)
+{
+    // Get source
+    String src = aNode.getDirectiveValue("Src");
+    if(src==null) { System.out.println("SlideView.addImageItem: No source defined"); return; }
+    
+    // Get image
+    WebURL url = getSlideShow()._parURL.getChild(src);
+    Image img = Image.get(url);
+    if(img==null) { System.out.println("SlideView.addImageItem: Image not found for source" + src); return; }
+    
+    // Create ImageView
+    ImageView iview = new ImageView(img, true, true);
+    iview.setLeanX(HPos.CENTER);
+    
+    // Add to BodyView
+    _bodyView.addChild(iview);
+}
+
+protected void shrinkItemFontsToFit()
+{
+    double scale = 1;
+    
+    // While body view wants to grow off page, shrink item text fonts
     while(_bodyView.getPrefHeight(_bodyView.getWidth())>_bodyView.getHeight()) {
-        System.out.println("PW: " + _bodyView.getPrefHeight(_bodyView.getWidth()));
-        for(View child : _bodyView.getChildren()) { TextArea text = (TextArea)child;
-            double scale = text.getFontScale() - .05;
-            text.setFontScale(scale);
+        
+        // Iterate over children
+        System.out.println("SlideView.shrinkItemFontsToFit: " + _bodyView.getPrefHeight(_bodyView.getWidth()));
+        scale -= .05;
+        for(View child : _bodyView.getChildren()) {
+        
+            // Handle TextArea
+            if(child instanceof TextArea) { TextArea text = (TextArea)child;
+                text.setFontScale(scale);
+            }
+            
+            // Handle anything else
+            else {
+                child.setPrefSize(-1,-1);
+                Size size = child.getPrefSize();
+                size.width *= scale; size.height *= scale;
+                child.setPrefSize(size);
+            }
         }
         _bodyView.relayout();
     }
@@ -148,33 +226,6 @@ protected void setParent(ParentView aPar)
 {
     super.setParent(aPar); if(aPar==null) return;
     _pageText.setText(getPageNum() + " of " + _slideShow.getSlideCount());
-}
-
-/**
- * The view for the body.
- */
-public class BodyView extends ColView {
-    
-    /** Creates a new BodyView. */
-    public BodyView() { setSpacing(12); setFillWidth(true); }
-    
-    /**
-     * Adds a new item.
-     */
-    public void addItem(String anItem)
-    {
-        // Get string
-        String string = anItem;
-        if(string.startsWith("\t\t")) string = string.replace("\t\t", "\t\u2022 ");
-        else if(string.startsWith("\t")) string = string.replace("\t", "\u2022 ");
-        
-        // Create TextArea
-        TextArea text = new TextArea(); text.setFont(_font1); text.setWrapText(true); text.setTextFill(Color.WHITE);
-        text.setText(string); text.setEditable(false); text.setFill(null);
-        text.addEventHandler(e -> text.setFill(_color), MouseEnter);
-        text.addEventHandler(e -> text.setFill(null), MouseExit);
-        addChild(text);
-    }
 }
 
 }
