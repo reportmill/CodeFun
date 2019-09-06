@@ -1,0 +1,59 @@
+
+[Background] Src:Background.snp
+
+[Decoration] Src:Logo.png, Position:BottomRight, Margin:20
+
+Introducing ReportMill
+
+	A Java reporting tool to turn Java datsets into formatted reports
+
+	Create templates with RMStudio page layout app
+
+	Generate PDF, HTML or images with ReportMill.jar framework
+
+Innovative Approach to Design
+
+	RMStudio is a page layout app
+
+	[Image] Src:RMStudio.png, Position:CENTER
+
+Innovative Approach to Design (p2)
+
+	Not a Crystal Reports clone
+
+	Templates designed in the context of a page
+		[Hide] Not banded
+		[Hide] Page Headers/Footers just in the background of page
+		[Hide] Easily design forms, including any existing PDF
+		[Hide] Multiple tables, graphs allowed on a page
+		[Hide] Easily define multiple page templates
+
+Standard Report Features
+
+	Table
+
+	Graph
+
+	CrossTab
+
+	Labels
+
+Unique design features
+
+	Effects: Drop shadow, emboss, reflect
+
+	Fills: Textures, gradients
+
+	Arbitrary transforms: Rotate, Scale, Skew
+
+Innovative Approach to Generation
+
+	Turn any Java dataset into PDF with one line of code
+
+	Dataset can be EJBs, Collections, POJOs, JDBC ResultSet
+
+	Packaged in one Jar file, ReportMill.jar
+
+ReportMill in the Browser
+
+	

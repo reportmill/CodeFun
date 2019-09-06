@@ -1,0 +1,89 @@
+
+Introducing CheerpJ
+
+	Compiles Java bytecode to JavaScript
+
+	Converts any Java desktop app, applet or library to run in the browser
+
+20 year old promise fulfilled
+
+	Web 2.0 was supposed to be Java in the browser
+
+	But there were problems with the plugin strategy
+
+CheerpJ is real Java runtime in browser
+
+	Start with Cheerp C to JavaScript compiler
+
+		Compile OpenJDK native platform code
+
+	Then CheerpJ Java to JavaScript compiler
+
+		Compile OpenJDK runtime classes
+
+	Result is a real port of Java runtime
+
+		Just like Java for Mac, Windows, Linux
+
+CheerpJ fixes plugin problems
+
+	Java runtime is always available
+
+	Java runtime is always up-to-date
+
+	Always running same UI code, regardless of platform
+
+	All the security protections of the JavaScript sandbox
+
+Proof of concept
+
+	ReportMill report designer
+
+	Standard page layout app and more
+
+	200k lines of Java UI code
+
+	Add shapes, text, images, tables, graphs
+
+	Set colors, gradients, textures, effects
+
+ReportMill in the Browser
+
+	Compile jar to JavaScript
+
+	Copy JavaScript to website
+
+	Add simple HTML launcher
+
+	Done!
+
+CheerpJ brings Java back to the browser
+
+	Great performance, pixel-for-pixel identical, bug-for-bug compatible
+
+	Single stack app on desktop and browser
+
+	Reduced dev time, team size, cost, complexity
+
+	Not necessary to have a hybrid app in Java, JavaScript, HTML, CSS, AJAX
+
+Java development has many advantages
+
+	Typed language catches more errors at compile time
+
+	Quick iterate/compile/run cycle
+
+	Modern IDE features
+
+	Better debug environment
+
+CheerpJ Summary
+
+	Run any Java app or library in the browser
+
+	One-step compile Java bytecode to JavaScript
+
+	Java runtime classes loaded on demand from CDN
+
+	Available from Leaning Technologies
+	

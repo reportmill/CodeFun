@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BoxView PrefWidth="800" PrefHeight="600">
+  <ColView Padding="4" Spacing="4">
+    <RowView Padding="4" GrowWidth="true" Spacing="4">
+      <Label text="Select Slide Show:">
+        <font name="Arial" size="46" />
+      </Label>
+    </RowView>
+    <RowView Padding="4" GrowWidth="true" Spacing="4">
+      <ListView Name="ListView" MinWidth="120" MinHeight="320" GrowWidth="true">
+        <LineBorder Color="#c0c0c0" />
+        <font name="Arial" size="19" />
+      </ListView>
+    </RowView>
+    <RowView Padding="4" GrowWidth="true" Spacing="4">
+      <Button Name="OpenButton" PrefWidth="100" PrefHeight="28" Padding="2" LeanX="CENTER" text="Open">
+        <font name="Arial" size="14" />
+      </Button>
+    </RowView>
+  </ColView>
+</BoxView>

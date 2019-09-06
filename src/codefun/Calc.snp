@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SpringView width="400" height="500" PrefWidth="400" PrefHeight="500">
+  <LineBorder Color="#aaaaaa" Width="2" />
+  <color value="#ededed" />
+  <TextField Name="Text" x="21" y="46" width="363" height="56" Align="CENTER_RIGHT">
+    <font name="Arial" size="34" />
+  </TextField>
+  <Label Name="AltText" x="257" y="15" width="122" height="25" Align="CENTER_RIGHT" text="Label">
+    <font name="Arial" size="14" />
+  </Label>
+  <Button Name="Button1" x="35" y="125" width="70" height="73" text="1">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button2" x="123" y="125" width="70" height="73" text="2">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button3" x="211" y="125" width="70" height="73" text="3">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Plus" x="299" y="125" width="70" height="73" text="+">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Minus" x="300" y="211" width="70" height="73" text="-">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button6" x="212" y="211" width="70" height="73" text="6">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button5" x="123" y="211" width="70" height="73" text="5">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button4" x="36" y="211" width="70" height="73" text="4">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Equals" x="300" y="298" width="70" height="73" text="=">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button9" x="213" y="297" width="70" height="73" text="9">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button8" x="124" y="297" width="70" height="73" text="8">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button7" x="37" y="297" width="70" height="73" text="7">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Clear" x="301" y="382" width="70" height="73" text="Clr">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Button0" x="38" y="382" width="70" height="73" text="0">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Multiply" x="125" y="382" width="70" height="73" text="x">
+    <font name="Arial" size="34" />
+  </Button>
+  <Button Name="Divide" x="214" y="382" width="70" height="73" text="/">
+    <font name="Arial" size="34" />
+  </Button>
+</SpringView>
