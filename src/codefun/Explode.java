@@ -83,6 +83,7 @@ public Explode setHostView(ParentView aView)
     
     // Other stuff
     setManaged(false);
+    setPickable(false);
     setSize(_host.getWidth(), _host.getHeight());
     return this;
 }
