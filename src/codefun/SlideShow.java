@@ -27,7 +27,7 @@ public class SlideShow {
     SlidePlayer         _player;
     
     // Transitions
-    public enum Transition { SlideLeft, SlideRight, SlideDown, SlideUp, FadeIn, Explode, Instant };
+    public enum Transition { SlideLeft, SlideRight, SlideDown, SlideUp, FadeIn, Explode, Construct, Instant };
     
 /**
  * Creates a new SlideShow for source.
@@ -146,7 +146,16 @@ public void setTransition(Transition aTrans)  { _transition = aTrans; }
  */
 public Transition getTransitionReverse()
 {
-    return Transition.SlideRight;
+    switch(getTransition()) {
+        case Explode: return Transition.Construct;
+        case Construct: return Transition.Explode;
+        case SlideLeft: return Transition.SlideRight;
+        case SlideRight: return Transition.SlideLeft;
+        case SlideUp: return Transition.SlideDown;
+        case SlideDown: return Transition.SlideUp;
+        case Instant: return Transition.Instant;
+        default: return Transition.SlideRight;
+    }
 }
 
 /**

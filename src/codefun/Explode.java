@@ -20,9 +20,6 @@ public class Explode extends View {
     // The parent to hold explosion
     ParentView  _host;
     
-    // The offset from this view to explode view
-    Point       _offset;
-    
     // The image to be exploded
     Image       _img;
     
@@ -35,15 +32,24 @@ public class Explode extends View {
     // Whether to remove when finished
     boolean     _removeOnDone, _restoreOnDone;
     
+    // Whether to reverse (construct)
+    boolean     _reverse;
+    
     // Width/height of image/view pieces
     double      _iw, _ih, _vw, _vh;
+    
+    // The offset from this view to explode view
+    Point       _offset;
     
     // The array of fragments
     Frag        _frags[][];
     
-    // The random number generator
-    static Random _rand = new Random();
-    static Interpolator _interp = Interpolator.EASE_OUT;
+    // The interpolator
+    Interpolator _interp = Interpolator.EASE_OUT;
+    
+    // Constants
+    private static int MAX_TIME = 2000;
+    private static Random _rand = new Random();
     
 /**
  * Creates a new Explode.
@@ -65,6 +71,9 @@ public Explode setImage(Image anImage)  { _img = anImage; return this; }
  */
 public Explode setHostView(ParentView aView)
 {
+    // Just return if null
+    if(aView==null) return this;
+    
     // Set host
     _host = aView;
     
@@ -79,14 +88,23 @@ public Explode setHostView(ParentView aView)
 }
 
 /**
+ * Reverses the effect (construct instead of explode).
+ */
+public Explode reverse()
+{
+    _interp = Interpolator.EASE_IN;
+    _reverse = !_reverse; return this;
+}
+
+/**
  * Configures explosion animation.
  */
 public void configure()
 {
     // Create image if needed
     if(_img==null)
-        _img = ViewUtils.getImage(_view);
-    
+        _img = ViewUtils.getImageForScale(_view, 1);
+
     // Set sizes for image/view pieces
     _iw = _img.getWidth()/_gw;
     _ih = _img.getHeight()/_gh;
@@ -102,7 +120,7 @@ public void configure()
     ViewUtils.addChild(_host, this);
     
     // Start animation with hooks to call animFrame and animFinish
-    getAnim(2000).setOnFrame(a -> animFrame()).setOnFinish(a -> animFinish()).play();
+    getAnim(MAX_TIME).setOnFrame(a -> animFrame()).setOnFinish(a -> animFinish()).play();
     
     // Hide view
     _view.setOpacity(0);
@@ -159,7 +177,8 @@ Frag getFrag(double aX, double aY, double dX, double dY)
     
     // Create random rotation and duration of piece
     double rot = _rand.nextDouble()*720 - 360;
-    int time = 1000 + _rand.nextInt(1000);
+    int varTime = MAX_TIME/4;
+    int time = MAX_TIME - varTime + _rand.nextInt(varTime);
     
     // Create new frag
     Frag frag = new Frag(); frag.ix = aX; frag.iy = aY;
@@ -173,7 +192,11 @@ Frag getFrag(double aX, double aY, double dX, double dY)
  */
 void animFrame()
 {
+    // Get current anim time
     int time = getAnim(0).getTime();
+    if(_reverse) time = Math.max(MAX_TIME - time, 0);
+    
+    // Update frags and paint
     Rect rect = updateFrags(time);
     repaint(rect);
 }
@@ -219,7 +242,9 @@ Rect updateFrags(double aTime)
     }
     
     // Return repaint rect
-    return new Rect(x0, y0, x1 - x0, y1 - y0);
+    Rect rect = new Rect(x0, y0, x1 - x0, y1 - y0);
+    if(_reverse) rect.inset(-10);
+    return rect;
 }
 
 /**

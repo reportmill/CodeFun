@@ -83,10 +83,15 @@ public void setSlideView(SlideView aSV)
         case FadeIn: _mainBox.setTransition(TransitionPane.FadeIn); break;
         case Instant: _mainBox.setTransition(TransitionPane.Instant); break;
         case Explode: configureExplode(); break;
+        case Construct: _mainBox.setTransition(TransitionPane.Instant); break;
     }
 
     // Reset content
     _mainBox.setContent(aSV);
+    
+    // Configure transition (for some)
+    if(trans==SlideShow.Transition.Construct)
+        configureConstruct(aSV);
 }
 
 /**
@@ -126,6 +131,17 @@ protected void configureExplode()
     }
     
     else _mainBox.setTransition(TransitionPane.MoveRight);
+}
+
+/**
+ * Configures construct transition.
+ */
+protected void configureConstruct(SlideView aView)
+{
+    if(aView==null) return;
+    
+    //_mainBox.setTransition(TransitionPane.Instant);
+    new Explode(aView, 30, 30, null).setHostView(_mainBox.getParent()).reverse().playAndRestore();
 }
 
 /**
