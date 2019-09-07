@@ -1,5 +1,5 @@
 package codefun;
-import snap.gfx.Color;
+import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snap.web.WebURL;
@@ -47,10 +47,10 @@ protected void initUI()
     // Decorate open box
     View openBox = _listView.getParent().getParent();
     openBox.setPadding(30,30,30,30);
-    openBox.setFill(new Color("#B9F7F5"));
+    openBox.setFill(ViewUtils.getBackFill());
     openBox.setBorder(Color.DARKGRAY, 2);
     
-    //
+    // Add action to bring back open panel when escape key hit
     addKeyActionFilter("EscapeAction", "ESCAPE");
 }
 
@@ -66,6 +66,10 @@ protected void respondUI(ViewEvent anEvent)
     // Handle OpenButton
     if(anEvent.equals("OpenButton"))
         openSelectedShow();
+        
+    // Handle SourceButton
+    if(anEvent.equals("SourceButton"))
+        openSelectedShowSource();
         
     // Handle EscapeAction
     if(anEvent.equals("EscapeAction"))
@@ -98,6 +102,32 @@ public void openSelectedShow()
     
     // Install in MainBox
     _mainBox.setContent(player.getUI());
+}
+
+/**
+ * Opens selected show.
+ */
+public void openSelectedShowSource()
+{
+    // Get URL for SlideShow
+    String name = _listView.getSelItem();
+    String path = ROOT + '/' + name + "/Slides.txt";
+    WebURL url = WebURL.getURL(path);
+    
+    // Create SlideShow
+    String text = url.getText();
+    TextView textView = new TextView();
+    textView.setText(text);
+    textView.setFont(new Font("Arial", 14));
+    
+    // Wrap in Box
+    BoxView boxView = new BoxView(textView, true, true);
+    boxView.setGrowWidth(true); boxView.setGrowHeight(true);
+    boxView.setPadding(12,12,12,12);
+    boxView.setFill(ViewUtils.getBackFill());
+    
+    // Install in MainBox
+    _mainBox.setContent(boxView);
 }
 
 /**

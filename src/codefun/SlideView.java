@@ -79,10 +79,7 @@ public SlideView(SlideNode aSlide)
     _pageText.setText(pageNum + " of " + pageCount);
     
     // Create badge
-    ImageView iview = new ImageView(_slideShow._img); iview.setSize(iview.getPrefSize());
-    iview.setXY(getWidth() - iview.getWidth() - 10, getHeight() - iview.getHeight() - 10);
-    iview.setEffect(new ShadowEffect(6,Color.BLACK,1,1)); iview.setFill(Color.CLEAR);
-    addChild(iview);
+    addBadgeImage(_slideShow._img);
     
     // Set HeaderText
     String headerText = _slide.getText();
@@ -151,6 +148,7 @@ public void addTextItem(SlideNode aNode)
     // Create TextArea
     TextArea textView = new TextArea(); textView.setGrowWidth(true);
     textView.setText(text); textView.setEditable(false); textView.setWrapText(true);
+    textView.setPickable(false);
     textView.setFill(null); textView.setTextFill(Color.WHITE); textView.setFont(_font1);
     textView.addEventHandler(e -> textView.setFill(_color), MouseEnter);
     textView.addEventHandler(e -> textView.setFill(null), MouseExit);
@@ -181,6 +179,29 @@ public void addImageItem(SlideNode aNode)
     _bodyView.addChild(iview);
 }
 
+/**
+ * Adds a badge image to page.
+ */
+protected void addBadgeImage(Image anImage)
+{
+    // Create ImageView
+    ImageView iview = new ImageView(anImage);
+    iview.setMargin(10,10,10,10);
+    iview.setManaged(false);
+    iview.setLean(Pos.BOTTOM_RIGHT);
+    iview.setEffect(new ShadowEffect(6,Color.BLACK,1,1)); iview.setFill(Color.CLEAR);
+    
+    // Size ImageView
+    if(anImage.isLoaded()) iview.setSize(iview.getPrefSize());
+    else anImage.addLoadListener(() -> iview.setSize(iview.getPrefSize()));
+    
+    // Add to this SlideView
+    addChild(iview);
+}
+
+/**
+ * This method resizes slide items to make sure they fit.
+ */
 protected void shrinkItemFontsToFit()
 {
     // While body view wants to grow off page, shrink item text fonts

@@ -2,8 +2,9 @@
 <BoxView PrefWidth="800" PrefHeight="600">
   <ColView Padding="4" Spacing="4">
     <RowView Padding="4" GrowWidth="true" Spacing="4">
-      <Label text="Select Slide Show:">
-        <font name="Arial" size="46" />
+      <Label Padding="5" text="Select Slide Show:">
+        <BevelBorder />
+        <font name="Arial Bold" size="40" />
       </Label>
     </RowView>
     <RowView Padding="4" GrowWidth="true" Spacing="4">
@@ -12,7 +13,10 @@
         <font name="Arial" size="19" />
       </ListView>
     </RowView>
-    <RowView Padding="4" GrowWidth="true" Spacing="4">
+    <RowView Padding="4" GrowWidth="true" Spacing="24">
+      <Button Name="SourceButton" PrefWidth="100" PrefHeight="28" Padding="2" LeanX="CENTER" text="Source">
+        <font name="Arial" size="14" />
+      </Button>
       <Button Name="OpenButton" PrefWidth="100" PrefHeight="28" Padding="2" LeanX="CENTER" text="Open">
         <font name="Arial" size="14" />
       </Button>
