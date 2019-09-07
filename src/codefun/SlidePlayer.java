@@ -17,6 +17,9 @@ public class SlidePlayer extends ViewOwner {
     // The Slide box
     TransitionPane      _mainBox;
     
+    // Whether player is moveing to previous slide
+    boolean             _reversing;
+    
 /**
  * Creates a new SlidePlayer for SlideShow.
  */
@@ -58,10 +61,17 @@ public void setSlideIndex(int anIndex)
     if(anIndex<0 || anIndex>=getSlideCount()) return;
     _sindex = anIndex;
     
+    // Reset transition
+    _slideShow.setTransition(SlideShow.Transition.SlideLeft);
+    
     // Process directives for slide
     SlideNode slide = getSlide(anIndex);
     if(slide!=null)
         slide.processDirectives();
+        
+    // If reversing, reverse transition
+    if(_reversing)
+        _slideShow.setTransition(_slideShow.getTransitionReverse());
     
     // Install slide view
     SlideView sview = getSlideView(anIndex);
@@ -107,16 +117,10 @@ public void nextSlide()
  */
 public void prevSlide()
 {
-    // Configure reverse transition
-    SlideShow.Transition trans1 = _slideShow.getTransition();
-    SlideShow.Transition trans2 = _slideShow.getTransitionReverse();
-    _slideShow.setTransition(trans2);
-    
     // Set slide
+    _reversing = true;
     setSlideIndex(getSlideIndex()-1);
-    
-    // Restore transition
-    _slideShow.setTransition(trans1);
+    _reversing = false;
 }
 
 /**
