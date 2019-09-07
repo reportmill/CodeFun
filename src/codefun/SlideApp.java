@@ -1,5 +1,6 @@
 package codefun;
 import snap.gfx.Color;
+import snap.util.SnapUtils;
 import snap.view.*;
 import snap.web.WebURL;
 
@@ -35,6 +36,7 @@ protected void initUI()
     String names[] = getShowNames();
     _listView.setItems(names);
     _listView.setSelIndex(0);
+    enableEvents(_listView, MouseRelease);
     
     // Decorate open box
     View openBox = _listView.getParent().getParent();
@@ -49,15 +51,25 @@ protected void initUI()
 protected void respondUI(ViewEvent anEvent)
 {
     // Handle OpenButton
-    if(anEvent.equals("OpenButton")) {
-        String name = _listView.getSelItem();
-        SlidePane spane = new SlidePane();
-        String path = ROOT + '/' + name + "/Slides.txt";
-        WebURL url = WebURL.getURL(path);
-        spane.setSource(url);
-        _mainBox.setContent(spane.getUI());
-    }
-        
+    if(anEvent.equals("ListView") && anEvent.getClickCount()==2)
+        openSelectedShow();
+    
+    // Handle OpenButton
+    if(anEvent.equals("OpenButton"))
+        openSelectedShow();
+}
+
+/**
+ * Opens selected show.
+ */
+public void openSelectedShow()
+{
+    String name = _listView.getSelItem();
+    SlidePane spane = new SlidePane();
+    String path = ROOT + '/' + name + "/Slides.txt";
+    WebURL url = WebURL.getURL(path);
+    spane.setSource(url);
+    _mainBox.setContent(spane.getUI());
 }
 
 /**
@@ -84,8 +96,14 @@ public String[] getShowNames()
  */
 public static void main(String args[])
 {
+    snaptea.TV.set();
+    if(SnapUtils.isTeaVM)
+        ROOT = "http://reportmill.com/snaptea/SlideShows";
+    
     SlideApp app = new SlideApp();
     
+    if(SnapUtils.isTeaVM)
+        app.getWindow().setMaximized(true);
     app.setWindowVisible(true);
 }
 

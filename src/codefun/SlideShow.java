@@ -26,6 +26,12 @@ public class SlideShow {
     // The decoration image
     Image               _img;
 
+    // The transition
+    Transition          _transition = Transition.SlideLeft;
+    
+    // Transitions
+    public enum Transition { SlideLeft, SlideRight, SlideDown, SlideUp, FadeIn, Explode, Instant };
+    
 /**
  * Creates a new SlideShow for source.
  */
@@ -83,8 +89,7 @@ public void setSource(Object aSource)
     }
     
     // Process directives
-    for(SlideNode node : _directives)
-        processDirective(node);
+    processDirectives();
 }
 
 /**
@@ -101,6 +106,33 @@ public SlideNode getSlide(int anIndex)  { return _slideNodes.get(anIndex); }
  * Returns the individual slide at given index.
  */
 public SlideView getSlideView(int anIndex)  { return getSlide(anIndex).getSlideView(); }
+
+/**
+ * Returns the transition.
+ */
+public Transition getTransition()  { return _transition; }
+
+/**
+ * Sets the transition.
+ */
+public void setTransition(Transition aTrans)  { _transition = aTrans; }
+
+/**
+ * Returns the reverse transition.
+ */
+public Transition getTransitionReverse()
+{
+    return Transition.SlideRight;
+}
+
+/**
+ * Processes a directives.
+ */
+protected void processDirectives()
+{
+    for(SlideNode node : _directives)
+        processDirective(node);
+}
 
 /**
  * Processes a directive.
@@ -125,6 +157,18 @@ protected void processDirective(SlideNode aNode)
         if(src!=null) {
             WebURL url = _parURL.getChild(src);
             _img = Image.get(url);
+        }
+    }
+    
+    // Handle Transition
+    else if(dir.equals("Transition")) {
+        String name = aNode.getDirectiveValue("Name");
+        try {
+            Transition trans = Transition.valueOf(name);
+            setTransition(trans);
+        }
+        catch(IllegalArgumentException e) {
+            System.err.println("SlideShow.processDirective: Unknown Transition: " + name);
         }
     }
     

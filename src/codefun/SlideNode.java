@@ -126,6 +126,24 @@ public String getDirectiveValue(String aKey)
 public int getPageNum()  { return (_show._slideNodes.indexOf(this) + 1); }
 
 /**
+ * Processes a directives.
+ */
+public void processDirectives()
+{
+    for(SlideNode node : _directives)
+        processDirective(node);
+}
+
+/**
+ * Processes a directive.
+ */
+protected void processDirective(SlideNode aNode)
+{
+    // For now, just send to show
+    _show.processDirective(aNode);
+}
+
+/**
  * Returns the SlideView.
  */
 public SlideView getSlideView()

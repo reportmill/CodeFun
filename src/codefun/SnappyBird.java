@@ -132,9 +132,17 @@ void updateTime(ViewTimer aTimer)
     ViewList vlist = _flappy.getParent().getViewList();
     View hitView = vlist.getHitView(_flappy, null, 8);
     if(hitView!=null) {
-        Explode.explode(_flappy);
+        new Explode(_flappy, 10, 10, () -> explodeDone()).play();
         _veloc = 0; _flappy.setRotate(0); _flappy.setY(250);
     }
+}
+
+/**
+ * Called when explode is done.
+ */
+private void explodeDone()
+{
+    _flappy.getAnimCleared(800).setOpacity(1).play();
 }
 
 /** Standard main method. */
