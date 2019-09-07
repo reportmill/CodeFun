@@ -99,9 +99,9 @@ public SlideView(SlideNode aSNode)
 public SlideShow getSlideShow()  { return _slideShow; }
 
 /**
- * Returns the SlidePane.
+ * Returns the SlidePlayer.
  */
-public SlidePane getSlidePane()  { return _slideShow.getSlidePane(); }
+public SlidePane getPlayer()  { return _slideShow.getPlayer(); }
 
 /**
  * Returns the page number.
@@ -214,8 +214,8 @@ protected void processEvent(ViewEvent anEvent)
 {
     // Handle mouse click
     if(anEvent.isMouseClick()) {
-        if(anEvent.getX()>getWidth()/3) getSlidePane().nextSlide();
-        else getSlidePane().prevSlide();
+        if(anEvent.getX()>getWidth()/3) getPlayer().nextSlide();
+        else getPlayer().prevSlide();
     }
 }
 

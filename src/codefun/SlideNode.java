@@ -13,12 +13,12 @@ public class SlideNode {
     String               _text;
     
     // The items
-    SlideNode            _items[];
+    SlideNode            _items[] = new SlideNode[0];
     
-    // The directive
+    // The directive (if slide is directive)
     String               _directive;
     
-    // The directive values
+    // The directive values (if slide is directive)
     Map <String,String>  _dirVals;
     
     // The leading list of directives
@@ -34,18 +34,6 @@ public SlideNode(SlideShow aShow, String aStr)
 {
     _show = aShow;
     _text = aStr;
-}
-
-/**
- * Creates a SlideNode for given Show and items.
- */
-public SlideNode(SlideShow aShow, String theItems[])
-{
-    this(aShow, theItems[0]);
-    
-    _items = new SlideNode[theItems.length-1];
-    for(int i=1;i<theItems.length;i++)
-        _items[i-1] = new SlideNode(aShow, theItems[i]);
 }
 
 /**
@@ -72,6 +60,16 @@ public int getItemCount()  { return _items.length; }
  * Returns the individual item.
  */
 public SlideNode getItem(int anIndex)  { return _items[anIndex]; }
+
+/**
+ * Adds a slide item.
+ */
+public void addItem(SlideNode aNode)
+{
+    int len = _items.length;
+    _items = Arrays.copyOf(_items, len+1);
+    _items[len] = aNode;
+}
 
 /**
  * Returns whether node is a directive.
@@ -123,7 +121,7 @@ public String getDirectiveValue(String aKey)
 /**
  * Returns the page number.
  */
-public int getPageNum()  { return (_show._slideNodes.indexOf(this) + 1); }
+public int getPageNum()  { return (_show._slides.indexOf(this) + 1); }
 
 /**
  * Processes a directives.

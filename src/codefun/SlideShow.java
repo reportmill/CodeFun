@@ -4,21 +4,15 @@ import snap.gfx.*;
 import snap.web.WebURL;
 
 /**
- * A class to hold SlideNodes.
+ * A class to hold Slides.
  */
 public class SlideShow {
-    
-    // The SlidePane
-    SlidePane           _slidePane;
     
     // The source URL
     WebURL              _srcURL, _parURL;
     
-    // The leading list of directives
-    List <SlideNode>    _directives = new ArrayList();
-    
     // The list of SlideNodes
-    List <SlideNode>    _slideNodes = new ArrayList();
+    List <SlideNode>    _slides = new ArrayList();
     
     // The background image
     Image               _backImg;
@@ -29,17 +23,21 @@ public class SlideShow {
     // The transition
     Transition          _transition = Transition.SlideLeft;
     
+    // The Player
+    SlidePane           _player;
+    
     // Transitions
     public enum Transition { SlideLeft, SlideRight, SlideDown, SlideUp, FadeIn, Explode, Instant };
     
 /**
  * Creates a new SlideShow for source.
  */
-public SlideShow(SlidePane aSP, Object aSource)
+public SlideShow(Object aSource)
 {
-    _slidePane = aSP;
+    // Set the show source
     setSource(aSource);
     
+    // Set background/image defaults if not set
     if(_img==null) _img = Image.getImageForSize(5,5,true);
     if(_backImg==null) {
         _backImg = Image.getImageForSize(792,612,false);
@@ -51,7 +49,7 @@ public SlideShow(SlidePane aSP, Object aSource)
 /**
  * Returns the SlidePane.
  */
-public SlidePane getSlidePane()  { return _slidePane; }
+public SlidePane getPlayer()  { return _player; }
 
 /**
  * Sets the slides from source.
@@ -64,43 +62,69 @@ public void setSource(Object aSource)
         System.err.println("SlideShow.setSource: Can't find source URL for " + aSource); return; }
     _parURL = _srcURL.getParent();
     
+    // Get Show text
     String text = _srcURL.getText();
+    setText(text);
+}
+
+/**
+ * Sets the slides from text.
+ */
+public void setText(String aString)
+{
+    // Get Show text
+    String text = aString;
+    
+    // Get items as strings with no white space
     text = text.replace("\n\n", "\n").replace("\n\n", "\n");
     String items[] = text.split("\n");
-    
     int i = 0; while(i<items.length && items[i].trim().length()==0) i++;
-    while(i<items.length) {
-        int start = i, end = i+1; while(end<items.length && items[end].startsWith("\t")) end++;
-        String items2[] = Arrays.copyOfRange(items, start, end);
-        SlideNode snode = new SlideNode(this, items2);
-        _slideNodes.add(snode);
-        i = end; while(i<items.length && items[i].trim().length()==0) i++;
-    }
     
-    // Walk through nodes and move directives to slides or show
+    // Iterate over items to create nodes
     SlideNode slide = null;
-    SlideNode nodes[] = _slideNodes.toArray(new SlideNode[0]);
-    for(SlideNode node : nodes) {
-        if(node.isDirective()) {
-            if(slide==null) _directives.add(node);
-            else slide._directives.add(node);
-            _slideNodes.remove(node);
+    List <SlideNode> directives = new ArrayList();
+    for(String itemStr : items) {
+        
+        // If empty slide, just skip
+        if(itemStr.trim().length()==0) continue;
+        
+        // Ignore tabs before first slide
+        if(slide==null && itemStr.startsWith("\t")) {
+            itemStr = itemStr.trim();
+            System.out.println("SlideShow.setSource: Indented line before first slide");
+        }
+    
+        // Create new node for item string
+        SlideNode node = new SlideNode(this, itemStr);
+        
+        // If indented, add to last slide
+        if(itemStr.startsWith("\t"))
+            slide.addItem(node);
+            
+        // If directive, add to directives list
+        else if(node.isDirective())
+            directives.add(node);
+            
+        // Otherwise create new slide
+        else {
+            slide = node;
+            for(SlideNode dir : directives)
+                slide._directives.add(dir);
+            directives.clear();
+            _slides.add(slide);
         }
     }
-    
-    // Process directives
-    processDirectives();
 }
 
 /**
  * Returns the number of slides.
  */
-public int getSlideCount()  { return _slideNodes.size(); }
+public int getSlideCount()  { return _slides.size(); }
 
 /**
  * Returns the individual slide at given index.
  */
-public SlideNode getSlide(int anIndex)  { return _slideNodes.get(anIndex); }
+public SlideNode getSlide(int anIndex)  { return _slides.get(anIndex); }
 
 /**
  * Returns the individual slide at given index.
@@ -123,15 +147,6 @@ public void setTransition(Transition aTrans)  { _transition = aTrans; }
 public Transition getTransitionReverse()
 {
     return Transition.SlideRight;
-}
-
-/**
- * Processes a directives.
- */
-protected void processDirectives()
-{
-    for(SlideNode node : _directives)
-        processDirective(node);
 }
 
 /**

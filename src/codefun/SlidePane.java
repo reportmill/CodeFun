@@ -18,12 +18,13 @@ public class SlidePane extends ViewOwner {
     TransitionPane      _mainBox;
     
 /**
- * Sets the slides from source.
+ * Creates a new SlidePlayer for SlideShow.
  */
-public void setSource(Object aSource)
+public SlidePane(SlideShow aShow)
 {
-    // Load the SlideShow
-    _slideShow = new SlideShow(this, aSource);
+    // Set the SlideShow and set SlideShow.Player to this
+    _slideShow = aShow;
+    _slideShow._player = this;
     
     getUI();
     setSlideIndex(0);
@@ -137,17 +138,6 @@ protected View createUI()
     BoxView box = new ScaleBox(_mainBox, true, true); box.setPadding(4,4,4,4);
     box.setGrowWidth(true); box.setFill(Color.WHITE); //box.setFill(new Color(50,0,0));
     return box;
-}
-
-/**
- * Standard main method.
- */
-public static void main(String args[])
-{
-    SlidePane spane = new SlidePane();
-    //spane.setSource("/Users/jeff/cpj/Presentation.txt");
-    spane.setSource(SlidePane.class.getResource("Slides.txt"));
-    spane.setWindowVisible(true);
 }
 
 }
