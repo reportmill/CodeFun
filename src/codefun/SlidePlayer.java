@@ -4,9 +4,9 @@ import snap.view.*;
 import snap.viewx.TransitionPane;
 
 /**
- * A class to display and manage a list of slides.
+ * A class to play a SlideShow (manage views, clicks and such).
  */
-public class SlidePane extends ViewOwner {
+public class SlidePlayer extends ViewOwner {
 
     // The SlideShow
     SlideShow           _slideShow;
@@ -20,7 +20,7 @@ public class SlidePane extends ViewOwner {
 /**
  * Creates a new SlidePlayer for SlideShow.
  */
-public SlidePane(SlideShow aShow)
+public SlidePlayer(SlideShow aShow)
 {
     // Set the SlideShow and set SlideShow.Player to this
     _slideShow = aShow;

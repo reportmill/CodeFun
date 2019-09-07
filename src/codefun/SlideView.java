@@ -4,12 +4,12 @@ import snap.view.*;
 import snap.web.WebURL;
 
 /**
- * A view to show a slide.
+ * A view to render a slide.
  */
 public class SlideView extends ChildView {
     
-    // The SlideNode
-    SlideNode         _snode;
+    // The slide
+    SlideNode         _slide;
 
     // The SlideShow
     SlideShow         _slideShow;
@@ -33,13 +33,15 @@ public class SlideView extends ChildView {
     Color             _color = new Color(40,0,0,200); //new Color(245,245,255);
 
 /**
- * Creates a new SlideView for given SlidePane.
+ * Creates SlideView for given slide.
  */ 
-public SlideView(SlideNode aSNode)
+public SlideView(SlideNode aSlide)
 {
-    _snode = aSNode;
-    _slideShow = _snode.getSlideShow();
+    // Set slide and slideshow
+    _slide = aSlide;
+    _slideShow = _slide.getSlideShow();
     
+    // Configure basic view attributes
     setAlign(VPos.CENTER); setPrefSize(792,612); setSize(792,612); setBorder(Color.BLACK,1);
     enableEvents(MouseRelease);
     
@@ -47,10 +49,6 @@ public SlideView(SlideNode aSNode)
     ImageView backImgView = new ImageView(_slideShow._backImg, true, true);
     backImgView.setBounds(1,1,790,610);
     addChild(backImgView);
-    
-    // Create header rect
-    //RectView rview = new RectView(); rview.setFill(Color.LIGHTBLUE); rview.setBounds(36,18,720,150);
-    //addChild(rview);
     
     // Create HeaderView
     _headerView = new TextArea(); _headerView.setAlign(VPos.CENTER); _headerView.setWrapText(true);
@@ -75,6 +73,11 @@ public SlideView(SlideNode aSNode)
     _pageText.setBounds(350,580,92,20);
     addChild(_pageText);
     
+    // Set PageText text
+    int pageNum = _slide.getPageNum();
+    int pageCount = _slideShow.getSlideCount();
+    _pageText.setText(pageNum + " of " + pageCount);
+    
     // Create badge
     ImageView iview = new ImageView(_slideShow._img); iview.setSize(iview.getPrefSize());
     iview.setXY(getWidth() - iview.getWidth() - 10, getHeight() - iview.getHeight() - 10);
@@ -82,11 +85,11 @@ public SlideView(SlideNode aSNode)
     addChild(iview);
     
     // Set HeaderText
-    String headerText = _snode.getText();
+    String headerText = _slide.getText();
     setHeaderText(headerText);
     
     // Add items
-    for(SlideNode node : _snode.getItems())
+    for(SlideNode node : _slide.getItems())
         addItem(node);
         
     // Shrink fonts to fit
@@ -101,12 +104,12 @@ public SlideShow getSlideShow()  { return _slideShow; }
 /**
  * Returns the SlidePlayer.
  */
-public SlidePane getPlayer()  { return _slideShow.getPlayer(); }
+public SlidePlayer getPlayer()  { return _slideShow.getPlayer(); }
 
 /**
  * Returns the page number.
  */
-public int getPageNum()  { return _snode.getPageNum(); }
+public int getPageNum()  { return _slide.getPageNum(); }
 
 /**
  * Sets the HeaderText.
@@ -180,9 +183,8 @@ public void addImageItem(SlideNode aNode)
 
 protected void shrinkItemFontsToFit()
 {
-    double scale = 1;
-    
     // While body view wants to grow off page, shrink item text fonts
+    double scale = 1;
     while(_bodyView.getPrefHeight(_bodyView.getWidth())>_bodyView.getHeight()) {
         
         // Iterate over children
@@ -217,15 +219,6 @@ protected void processEvent(ViewEvent anEvent)
         if(anEvent.getX()>getWidth()/3) getPlayer().nextSlide();
         else getPlayer().prevSlide();
     }
-}
-
-/**
- * Override to set page number.
- */
-protected void setParent(ParentView aPar)
-{
-    super.setParent(aPar); if(aPar==null) return;
-    _pageText.setText(getPageNum() + " of " + _slideShow.getSlideCount());
 }
 
 }

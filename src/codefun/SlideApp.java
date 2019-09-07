@@ -94,7 +94,7 @@ public void openSelectedShow()
     SlideShow show = new SlideShow(url);
     
     // Create SlidePlayer
-    SlidePane player = new SlidePane(show);
+    SlidePlayer player = new SlidePlayer(show);
     
     // Install in MainBox
     _mainBox.setContent(player.getUI());

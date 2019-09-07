@@ -24,7 +24,7 @@ public class SlideShow {
     Transition          _transition = Transition.SlideLeft;
     
     // The Player
-    SlidePane           _player;
+    SlidePlayer         _player;
     
     // Transitions
     public enum Transition { SlideLeft, SlideRight, SlideDown, SlideUp, FadeIn, Explode, Instant };
@@ -47,9 +47,9 @@ public SlideShow(Object aSource)
 }
 
 /**
- * Returns the SlidePane.
+ * Returns the SlidePlayer.
  */
-public SlidePane getPlayer()  { return _player; }
+public SlidePlayer getPlayer()  { return _player; }
 
 /**
  * Sets the slides from source.
