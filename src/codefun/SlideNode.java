@@ -119,6 +119,25 @@ public String getDirectiveValue(String aKey)
 }
 
 /**
+ * Returns the transition this slide uses.
+ */
+public SlideShow.Transition getTransition()
+{
+    // Iterate over directives to find transition
+    for(SlideNode dir : _directives) {
+        if(dir.getDirective().equals("Transition")) {
+            String name = dir.getDirectiveValue("Name");
+            SlideShow.Transition trans = SlideUtils.getTransitionForName(name);
+            if(trans!=null)
+                return trans;
+        }
+    }
+    
+    // If no Transition directive, return default (SlideLeft)
+    return SlideShow.Transition.SlideLeft;
+}
+
+/**
  * Returns the page number.
  */
 public int getPageNum()  { return (_show._slides.indexOf(this) + 1); }

@@ -142,23 +142,6 @@ public Transition getTransition()  { return _transition; }
 public void setTransition(Transition aTrans)  { _transition = aTrans; }
 
 /**
- * Returns the reverse transition.
- */
-public Transition getTransitionReverse()
-{
-    switch(getTransition()) {
-        case Explode: return Transition.Construct;
-        case Construct: return Transition.Explode;
-        case SlideLeft: return Transition.SlideRight;
-        case SlideRight: return Transition.SlideLeft;
-        case SlideUp: return Transition.SlideDown;
-        case SlideDown: return Transition.SlideUp;
-        case Instant: return Transition.Instant;
-        default: return Transition.SlideRight;
-    }
-}
-
-/**
  * Processes a directive.
  */
 protected void processDirective(SlideNode aNode)
@@ -187,13 +170,9 @@ protected void processDirective(SlideNode aNode)
     // Handle Transition
     else if(dir.equals("Transition")) {
         String name = aNode.getDirectiveValue("Name");
-        try {
-            Transition trans = Transition.valueOf(name);
+        Transition trans = SlideUtils.getTransitionForName(name);
+        if(trans!=null)
             setTransition(trans);
-        }
-        catch(IllegalArgumentException e) {
-            System.err.println("SlideShow.processDirective: Unknown Transition: " + name);
-        }
     }
     
     // Otherwise complain

@@ -103,8 +103,10 @@ public Explode reverse()
 public void configure()
 {
     // Create image if needed
-    if(_img==null)
+    if(_img==null) {
+        _view.setOpacity(1);
         _img = ViewUtils.getImageForScale(_view, 1);
+    }
 
     // Set sizes for image/view pieces
     _iw = _img.getWidth()/_gw;
@@ -125,6 +127,10 @@ public void configure()
     
     // Hide view
     _view.setOpacity(0);
+    
+    // If reversed, configure frags exploded
+    if(_reverse)
+        animFrame();
 }
 
 /**

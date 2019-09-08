@@ -58,7 +58,18 @@ public int getSlideIndex()  { return _sindex; }
  */
 public void setSlideIndex(int anIndex)
 {
+    // If already set, just return
     if(anIndex<0 || anIndex>=getSlideCount()) return;
+    
+    // If reversing, get transition
+    SlideShow.Transition revTrans = null;
+    if(_reversing) {
+        SlideNode slide = _slideShow.getSlide(_sindex);
+        revTrans = slide.getTransition();
+        revTrans = SlideUtils.getTransitionReverse(revTrans);
+    }
+    
+    // Set value
     _sindex = anIndex;
     
     // Reset transition
@@ -71,7 +82,7 @@ public void setSlideIndex(int anIndex)
         
     // If reversing, reverse transition
     if(_reversing)
-        _slideShow.setTransition(_slideShow.getTransitionReverse());
+        _slideShow.setTransition(revTrans);
     
     // Install slide view
     SlideView sview = getSlideView(anIndex);
@@ -93,15 +104,11 @@ public void setSlideView(SlideView aSV)
         case FadeIn: _mainBox.setTransition(TransitionPane.FadeIn); break;
         case Instant: _mainBox.setTransition(TransitionPane.Instant); break;
         case Explode: configureExplode(); break;
-        case Construct: _mainBox.setTransition(TransitionPane.Instant); break;
+        case Construct: configureConstruct(aSV); return;
     }
 
     // Reset content
     _mainBox.setContent(aSV);
-    
-    // Configure transition (for some)
-    if(trans==SlideShow.Transition.Construct)
-        configureConstruct(aSV);
 }
 
 /**
@@ -109,7 +116,13 @@ public void setSlideView(SlideView aSV)
  */
 public void nextSlide()
 {
-    setSlideIndex(getSlideIndex()+1);
+    // If no previous slide, complain and return
+    int index = getSlideIndex()+1;
+    if(index>=getSlideCount()) {
+        beep(); return; }
+    
+    // Set slide index
+    setSlideIndex(index);
 }
 
 /**
@@ -117,9 +130,14 @@ public void nextSlide()
  */
 public void prevSlide()
 {
+    // If no previous slide, complain and return
+    int index = getSlideIndex()-1;
+    if(index<0) {
+        beep(); return; }
+        
     // Set slide
     _reversing = true;
-    setSlideIndex(getSlideIndex()-1);
+    setSlideIndex(index);
     _reversing = false;
 }
 
@@ -143,9 +161,17 @@ protected void configureExplode()
 protected void configureConstruct(SlideView aView)
 {
     if(aView==null) return;
-    
-    //_mainBox.setTransition(TransitionPane.Instant);
-    new Explode(aView, 30, 30, null).setHostView(_mainBox.getParent()).reverse().playAndRestore();
+    ViewUtils.addChild(_mainBox, aView);
+    new Explode(aView, 30, 30, () -> constructDone(aView)).setHostView(_mainBox.getParent()).reverse().playAndRestore();
+    ViewUtils.removeChild(_mainBox, aView);
+}
+
+/** Called when the Construct animation is finished to actually add new view. */
+private void constructDone(View aView)
+{
+    aView.setOpacity(1);
+    _mainBox.setTransition(TransitionPane.Instant);
+    _mainBox.setContent(aView);
 }
 
 /**
