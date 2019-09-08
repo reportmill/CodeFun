@@ -34,8 +34,12 @@ protected void initUI()
     _mainBox.setFill(Color.WHITE);
     _mainBox.setPrefSize(792,612);
     
-    // Get OpenPanelView
+    // Get/configure OpenPanelView
     _openPanelView = _mainBox.getContent();
+    _openPanelView.setPadding(30,30,30,30);
+    _openPanelView.setFill(ViewUtils.getBackFill());
+    _openPanelView.setBorder(Color.GRAY, 2);
+    _openPanelView.setEffect(new ShadowEffect(15, Color.DARKGRAY, 0, 0));
     
     // Get ListView
     _listView = getView("ListView", ListView.class);
@@ -43,12 +47,6 @@ protected void initUI()
     _listView.setItems(names);
     _listView.setSelIndex(0);
     enableEvents(_listView, MouseRelease);
-    
-    // Decorate open box
-    View openBox = _listView.getParent().getParent();
-    openBox.setPadding(30,30,30,30);
-    openBox.setFill(ViewUtils.getBackFill());
-    openBox.setBorder(Color.DARKGRAY, 2);
     
     // Add action to bring back open panel when escape key hit
     addKeyActionFilter("EscapeAction", "ESCAPE");

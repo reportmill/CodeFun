@@ -149,7 +149,7 @@ protected void configureExplode()
     View view = _mainBox.getContent();
     if(view!=null) {
         _mainBox.setTransition(TransitionPane.FadeIn);
-        new Explode(view, 30, 30, null).setHostView(_mainBox.getParent()).playAndRestore();
+        new Explode(view, 20, 20, null).setHostView(_mainBox.getParent()).playAndRestore();
     }
     
     else _mainBox.setTransition(TransitionPane.MoveRight);
@@ -162,7 +162,7 @@ protected void configureConstruct(SlideView aView)
 {
     if(aView==null) return;
     ViewUtils.addChild(_mainBox, aView);
-    new Explode(aView, 30, 30, () -> constructDone(aView)).setHostView(_mainBox.getParent()).reverse().playAndRestore();
+    new Explode(aView, 20, 20, () -> constructDone(aView)).setHostView(_mainBox.getParent()).reverse().playAndRestore();
     ViewUtils.removeChild(_mainBox, aView);
 }
 
