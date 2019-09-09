@@ -27,10 +27,12 @@ public class SlideView extends ChildView {
     StringView        _pageText;
     
     // The fonts
-    Font              _font0 = Font.Arial14.deriveFont(64).getBold();
-    Font              _font1 = Font.Arial14.deriveFont(36);
-    Font              _font2 = Font.Arial14.deriveFont(20);
-    Color             _color = new Color(40,0,0,200); //new Color(245,245,255);
+    private static Font    _font0 = Font.Arial14.deriveFont(64).getBold();
+    private static Font    _font1 = Font.Arial14.deriveFont(36);
+    private static Font    _font2 = Font.Arial14.deriveFont(20);
+    private static Color   _color = new Color(40,0,0,200); //new Color(245,245,255);
+    private static Effect  SHADOW_EFFECT = new ShadowEffect();
+    private static Effect  SHADOW_EFFECT_MORE = new ShadowEffect(15, Color.BLACK, 2, 2);
 
 /**
  * Creates SlideView for given slide.
@@ -42,7 +44,9 @@ public SlideView(SlideNode aSlide)
     _slideShow = _slide.getSlideShow();
     
     // Configure basic view attributes
-    setAlign(VPos.CENTER); setPrefSize(792,612); setSize(792,612); setBorder(Color.BLACK,1);
+    setAlign(VPos.CENTER);
+    setPrefSize(792,612); setSize(792,612);
+    setBorder(Color.BLACK,1);
     enableEvents(MouseRelease);
     
     // Create background image view
@@ -50,17 +54,8 @@ public SlideView(SlideNode aSlide)
     backImgView.setBounds(1,1,790,610);
     addChild(backImgView);
     
-    // Create HeaderView
-    _headerView = new TextArea(); _headerView.setAlign(VPos.CENTER); _headerView.setWrapText(true);
-    TextLineStyle lstyle = _headerView.getRichText().getDefaultLineStyle().copyFor(HPos.CENTER);
-    _headerView.getRichText().setDefaultLineStyle(lstyle);
-    TextLineStyle lstyle2 = lstyle;
-    _headerView.setFont(_font0);
-    _headerView.setFill(Color.CLEAR);
-    _headerView.setTextFill(Color.WHITE); //_headerView.setEffect(new ShadowEffect(12,new Color(180,0,0),0,0));
-    _headerView.setPadding(16,16,16,16);
-    _headerView.setBounds(36,18,720,130);
-    addChild(_headerView);
+    // Add HeaderView
+    addHeader();
     
     // Create BodyView
     _bodyView = new ColView(); _bodyView.setAlign(VPos.CENTER);
@@ -80,10 +75,6 @@ public SlideView(SlideNode aSlide)
     
     // Create badge
     addBadgeImage(_slideShow._img);
-    
-    // Set HeaderText
-    String headerText = _slide.getText();
-    setHeaderText(headerText);
     
     // Add items
     for(SlideNode node : _slide.getItems())
@@ -111,9 +102,33 @@ public int getPageNum()  { return _slide.getPageNum(); }
 /**
  * Sets the HeaderText.
  */
-public void setHeaderText(String aValue)
+public void addHeader()
 {
-    _headerView.setText(aValue);
+    // Create/configure HeaderView
+    _headerView = new TextArea();
+    _headerView.setAlign(Pos.TOP_CENTER);
+    _headerView.setPadding(16,16,16,16);
+    _headerView.setWrapText(true);
+    _headerView.setFont(_font0);
+    _headerView.setTextFill(Color.WHITE);
+    _headerView.setEffect(SHADOW_EFFECT);
+    
+    // Set bounds and add
+    _headerView.setBounds(36,18,720,130);
+    addChild(_headerView);
+    
+    // If no items size to page, Align center (vertically)
+    String slideType = _slide.getSlideType();
+    if(slideType.equals("Title")) {
+        _headerView.setHeight(560);
+        _headerView.setFont(_font0.deriveFont(72));
+        _headerView.setAlign(Pos.CENTER);
+        _headerView.setEffect(SHADOW_EFFECT_MORE);
+    }
+    
+    // Set text and scale-to-fit if needed
+    String text = _slide.getText();
+    _headerView.setText(text);
     _headerView.getTextBox().scaleTextToFit();
 }
 
@@ -208,9 +223,10 @@ protected void shrinkItemFontsToFit()
     double scale = 1;
     while(_bodyView.getPrefHeight(_bodyView.getWidth())>_bodyView.getHeight()) {
         
-        // Iterate over children
-        System.out.println("SlideView.shrinkItemFontsToFit: " + _bodyView.getPrefHeight(_bodyView.getWidth()));
+        // Reduce scale
         scale -= .05;
+        
+        // Iterate over children and set new scale
         for(View child : _bodyView.getChildren()) {
         
             // Handle TextArea
@@ -226,6 +242,8 @@ protected void shrinkItemFontsToFit()
                 child.setPrefSize(size);
             }
         }
+        
+        // Relayout body
         _bodyView.relayout();
     }
 }
@@ -236,7 +254,7 @@ protected void shrinkItemFontsToFit()
 protected void processEvent(ViewEvent anEvent)
 {
     // Handle mouse click
-    if(anEvent.isMouseClick()) {
+    if(anEvent.isMouseRelease()) {
         if(anEvent.getX()>getWidth()/3) getPlayer().nextSlide();
         else getPlayer().prevSlide();
     }

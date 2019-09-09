@@ -119,6 +119,26 @@ public String getDirectiveValue(String aKey)
 }
 
 /**
+ * Returns the slide type.
+ * First slide or slides without children are type "Title".
+ */
+public String getSlideType()
+{
+    // Iterate over directives to find transition
+    for(SlideNode dir : _directives) {
+        if(dir.getDirective().equals("SlideType")) {
+            String name = dir.getDirectiveValue("Name");
+            if(name!=null)
+                return name;
+        }
+    }
+    
+    if(getPageNum()==0 || getItemCount()==0)
+        return "Title";
+    return "Basic";
+}
+
+/**
  * Returns the transition this slide uses.
  */
 public SlideShow.Transition getTransition()
