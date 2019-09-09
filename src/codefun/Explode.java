@@ -40,6 +40,7 @@ public class Explode extends View {
     
     // The offset from this view to explode view
     Point       _offset;
+    double      _scale = 1;
     
     // The array of fragments
     Frag        _frags[][];
@@ -48,7 +49,7 @@ public class Explode extends View {
     Interpolator _interp = Interpolator.EASE_OUT;
     
     // Constants
-    private static int MAX_TIME = 2000;
+    private static int MAX_TIME = 1000;
     private static Random _rand = new Random();
     
 /**
@@ -80,10 +81,12 @@ public Explode setHostView(ParentView aView)
     // Calculate offset from host view to victim view
     _offset = new Point(0,0);
     for(View v=_view;v!=_host;v=v.getParent()) { _offset.x += v.getX(); _offset.y += v.getY(); }
+    for(View v=_view;v!=_host;v=v.getParent()) _scale *= v.getScaleX();
     
     // Other stuff
     setManaged(false);
     setPickable(false);
+    setScale(_scale);
     setSize(_host.getWidth(), _host.getHeight());
     return this;
 }

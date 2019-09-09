@@ -27,8 +27,11 @@ public class SlideView extends ChildView {
     StringView        _pageText;
     
     // The fonts
-    private static Font    _font0 = Font.Arial14.deriveFont(64).getBold();
-    private static Font    _font1 = Font.Arial14.deriveFont(36);
+    private static Font    HEADER_FONT = Font.Arial14.deriveFont(64).getBold();
+    private static Font    HEADER_FONT_BIG = HEADER_FONT.deriveFont(72);
+    private static Font    ITEM_FONT = Font.Arial14.deriveFont(32);
+    private static Font    ITEM_FONT_BIG = ITEM_FONT.deriveFont(36);
+    private static Font    ITEM_FONT_HUGE = ITEM_FONT.deriveFont(40);
     private static Font    _font2 = Font.Arial14.deriveFont(20);
     private static Color   _color = new Color(40,0,0,200); //new Color(245,245,255);
     private static Effect  SHADOW_EFFECT = new ShadowEffect();
@@ -54,14 +57,14 @@ public SlideView(SlideNode aSlide)
     backImgView.setBounds(1,1,790,610);
     addChild(backImgView);
     
-    // Add HeaderView
-    addHeader();
-    
     // Create BodyView
     _bodyView = new ColView(); _bodyView.setAlign(VPos.CENTER);
-    _bodyView.setSpacing(12); //_bodyView.setFillWidth(true);
-    _bodyView.setBounds(72,150,684,400);
+    _bodyView.setSpacing(20); //_bodyView.setFillWidth(true);
+    _bodyView.setBounds(72,140,684,400);
     addChild(_bodyView);
+    
+    // Add HeaderView
+    addHeader();
     
     // Create PageText
     _pageText = new StringView(); _pageText.setAlign(Pos.CENTER); _pageText.setTextFill(Color.WHITE);
@@ -109,7 +112,7 @@ public void addHeader()
     _headerView.setAlign(Pos.TOP_CENTER);
     _headerView.setPadding(16,16,16,16);
     _headerView.setWrapText(true);
-    _headerView.setFont(_font0);
+    _headerView.setFont(HEADER_FONT);
     _headerView.setTextFill(Color.WHITE);
     _headerView.setEffect(SHADOW_EFFECT);
     
@@ -118,12 +121,14 @@ public void addHeader()
     addChild(_headerView);
     
     // If no items size to page, Align center (vertically)
-    String slideType = _slide.getSlideType();
-    if(slideType.equals("Title")) {
-        _headerView.setHeight(560);
-        _headerView.setFont(_font0.deriveFont(72));
+    if(_slide.isTitleSlide()) {
+        _headerView.setHeight(_headerView.getHeight()+250);
+        _headerView.setFont(HEADER_FONT_BIG);
         _headerView.setAlign(Pos.CENTER);
         _headerView.setEffect(SHADOW_EFFECT_MORE);
+        _bodyView.setY(_bodyView.getY()+180);
+        _bodyView.setHeight(_bodyView.getHeight()-180);
+        _bodyView.setAlign(Pos.TOP_CENTER);
     }
     
     // Set text and scale-to-fit if needed
@@ -157,19 +162,38 @@ public void addTextItem(SlideNode aNode)
 {
     // Get text with bullet char prefix
     String text = aNode.getText();
-    if(text.startsWith("\t\t")) text = text.replace("\t\t", "\t\u2022 ");
+    if(_slide.isTitleSlide()) text = text.trim();
+    else if(text.startsWith("\t\t")) text = text.replace("\t\t", "\t\u2022 ");
     else if(text.startsWith("\t")) text = text.replace("\t", "\u2022 ");
     
     // Create TextArea
     TextArea textView = new TextArea(); textView.setGrowWidth(true);
     textView.setText(text); textView.setEditable(false); textView.setWrapText(true);
     textView.setPickable(false);
-    textView.setFill(null); textView.setTextFill(Color.WHITE); textView.setFont(_font1);
+    textView.setFill(null); textView.setTextFill(Color.WHITE);
+    textView.setFont(getItemFont());
     textView.addEventHandler(e -> textView.setFill(_color), MouseEnter);
     textView.addEventHandler(e -> textView.setFill(null), MouseExit);
     
+    if(_slide.isTitleSlide())
+        textView.setAlign(Pos.CENTER);
+    else {
+        textView.setDefaultLineStyle(textView.getDefaultLineStyle().copyFor(TextLineStyle.LEFT_INDENT_KEY, 40));
+    }
+    
     // Add to body view
     _bodyView.addChild(textView);
+}
+
+/**
+ * Return Item font based on length.
+ */
+private Font getItemFont()
+{
+    int mlen = _slide.getMaxItemLength();
+    if(mlen<20) return ITEM_FONT_HUGE;
+    if(mlen<40) return ITEM_FONT_BIG;
+    return ITEM_FONT;
 }
 
 /**

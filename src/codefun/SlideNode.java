@@ -119,6 +119,15 @@ public String getDirectiveValue(String aKey)
 }
 
 /**
+ * Returns whether slide is title slide.
+ */
+public boolean isTitleSlide()
+{
+    String type = getSlideType();
+    return type.equals("Title");
+}
+
+/**
  * Returns the slide type.
  * First slide or slides without children are type "Title".
  */
@@ -133,7 +142,7 @@ public String getSlideType()
         }
     }
     
-    if(getPageNum()==0 || getItemCount()==0)
+    if(getPageNum()==1 || getItemCount()==0)
         return "Title";
     return "Basic";
 }
@@ -161,6 +170,19 @@ public SlideShow.Transition getTransition()
  * Returns the page number.
  */
 public int getPageNum()  { return (_show._slides.indexOf(this) + 1); }
+
+/**
+ * Returns the max letter count of items.
+ */
+public int getMaxItemLength()
+{
+    int len = 0;
+    for(SlideNode item : getItems()) {
+        if(item.isDirective()) continue;
+        len = Math.max(len, item.getText().length());
+    }
+    return len;
+}
 
 /**
  * Processes a directives.
